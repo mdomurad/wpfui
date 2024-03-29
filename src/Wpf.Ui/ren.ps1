@@ -10,8 +10,13 @@ $Utf8Encoding = New-Object System.Text.UTF8Encoding $True
 function Process-Line {
     param ($line)
     if ($line -notmatch '^\s*//') { # Check if the line does not start with //
-
-        return $line -replace $oN, $nN
+        # Specifically handle the DictionaryUri or similar patterns
+        if ($line -match 'pack://application:,,,[/](.+?);component[/]Resources[/]Wpf.Ui.xaml') {
+            $line = $line -replace 'pack://application:,,,/' + $oN, 'pack://application:,,,/' + $nN
+        } else {
+            $line = $line -replace $oN, $nN
+        }
+        return $line
     } else {
         return $line
     }
